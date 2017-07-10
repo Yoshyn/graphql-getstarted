@@ -7,6 +7,12 @@ const schema = buildSchema(`
     quoteOfTheDay: String
     random: Float!
     rollDice(numDice: Int!, numSides: Int): [Int]
+    getDie(numSides: Int): RandomDie
+  }
+  type RandomDie {
+    numSides: Int!
+    rollOnce: Int!
+    roll(numRolls: Int!): [Int]
   }
 `);
 
