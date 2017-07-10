@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/Yoshyn/graphql-getstarted#readme",
   "dependencies": {
+    "express": "^4.15.3",
+    "express-graphql": "^0.6.6",
     "graphql": "^0.10.3"
   }
 }
