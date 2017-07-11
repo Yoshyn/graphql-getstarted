@@ -21,7 +21,13 @@ const resolver = {
   getString:     ()            => { return stored_string; },
   getMessage:    ({id})        => { return Message.getMessage({id}) },
   createMessage: ({input})     => { return Message.createMessage({input}) },
-  updateMessage: ({id, input}) => { return Message.updateMessage({id, input}) }
+  updateMessage: ({id, input}) => { return Message.updateMessage({id, input}) },
+  ip:            (args, req, graph_req)   => {
+    console.log('<args>', args, '</args>');
+    console.log('<req>', req, '</req>');
+    console.log('<graph_req>', graph_req, '</graph_req>');
+    return req.ip;
+  }
 };
 
 module.exports = resolver;
