@@ -8,7 +8,8 @@ const schema = buildSchema(`
     random: Float!
     rollDice(numDice: Int!, numSides: Int): [Int]
     getDie(numSides: Int): RandomDie
-    getMessage: String
+    getString: String
+    getMessage(id: ID!): Message
   }
   type RandomDie {
     numSides: Int!
@@ -16,9 +17,20 @@ const schema = buildSchema(`
     roll(numRolls: Int!): [Int]
   }
   type Mutation {
-    setMessage(message: String): String
+    setString(message: String): String
+    createMessage(input: MessageInput): Message
+    createMessage2(input: MessageInput): Message
+    updateMessage(id: ID!, input: MessageInput): Message
+  }
+  input MessageInput {
+    content: String
+    author: String
+  }
+  type Message {
+    id: ID!
+    content: String
+    author: String
   }
 `);
 
 module.exports = schema;
-

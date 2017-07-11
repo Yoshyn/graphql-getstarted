@@ -1,36 +1,14 @@
 // The root provides a resolver function for each API endpoint
 
-// This class implements the RandomDie GraphQL type
-class RandomDie {
-  constructor(numSides) {
-    this.numSides = numSides;
-  }
+var RandomDie = require('./models/random_die');
+var Message = require('./models/message');
 
-  rollOnce() {
-    return 1 + Math.floor(Math.random() * this.numSides);
-  }
-
-  roll({numRolls}) {
-    var output = [];
-    for (var i = 0; i < numRolls; i++) {
-      output.push(this.rollOnce());
-    }
-    return output;
-  }
-}
-
-var fakeDatabase = {};
+var stored_string = '';
 
 const resolver = {
-  hello: () => {
-    return 'Hello world!';
-  },
-  quoteOfTheDay: () => {
-    return Math.random() < 0.5 ? 'Take it easy' : 'Salvation lies within';
-  },
-  random: () => {
-    return Math.random();
-  },
+  hello:         () => { return 'Hello world!'; },
+  quoteOfTheDay: () => { return Math.random() < 0.5 ? 'Take it easy' : 'Salvation lies within'; },
+  random:        () => { return Math.random(); },
   rollDice: function ({numDice, numSides}) {
     var output = [];
     for (var i = 0; i < numDice; i++) {
@@ -38,16 +16,12 @@ const resolver = {
     }
     return output;
   },
-  getDie: function ({numSides}) {
-    return new RandomDie(numSides || 6);
-  },
-  setMessage: function ({message}) {
-    fakeDatabase.message = message;
-    return message;
-  },
-  getMessage: function () {
-    return fakeDatabase.message;
-  }
+  getDie:        ({numSides})  => { return new RandomDie(numSides || 6); },
+  setString:     ({message})   => { stored_string = message; return message; },
+  getString:     ()            => { return stored_string; },
+  getMessage:    ({id})        => { return Message.getMessage({id}) },
+  createMessage: ({input})     => { return Message.createMessage({input}) },
+  updateMessage: ({id, input}) => { return Message.updateMessage({id, input}) }
 };
 
 module.exports = resolver;
