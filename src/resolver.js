@@ -19,6 +19,8 @@ class RandomDie {
   }
 }
 
+var fakeDatabase = {};
+
 const resolver = {
   hello: () => {
     return 'Hello world!';
@@ -38,6 +40,13 @@ const resolver = {
   },
   getDie: function ({numSides}) {
     return new RandomDie(numSides || 6);
+  },
+  setMessage: function ({message}) {
+    fakeDatabase.message = message;
+    return message;
+  },
+  getMessage: function () {
+    return fakeDatabase.message;
   }
 };
 

@@ -8,11 +8,15 @@ const schema = buildSchema(`
     random: Float!
     rollDice(numDice: Int!, numSides: Int): [Int]
     getDie(numSides: Int): RandomDie
+    getMessage: String
   }
   type RandomDie {
     numSides: Int!
     rollOnce: Int!
     roll(numRolls: Int!): [Int]
+  }
+  type Mutation {
+    setMessage(message: String): String
   }
 `);
 
