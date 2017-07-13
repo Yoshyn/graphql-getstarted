@@ -2,6 +2,8 @@
 
 Step from http://graphql.org/graphql-js/
 
+Some codes can differ but this follow the tutorial.
+
 RUN : node src/server.js
 
 VISIT :
