@@ -2,7 +2,6 @@ var express = require('express');
 var graphqlHTTP = require('express-graphql');
 
 var schema = require('./schema');
-var resolver = require('./resolver');
 
 function loggingMiddleware(req, res, next) {
   console.log('<req.ip>', req.ip, '</req.ip>');
@@ -13,7 +12,6 @@ var app = express();
 app.use(loggingMiddleware);
 app.use('/graphql', graphqlHTTP({
   schema: schema,
-  rootValue: resolver,
   graphiql: true,
 }));
 

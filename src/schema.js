@@ -1,46 +1,109 @@
 // Construct a schema, using GraphQL schema language
-var { buildSchema } = require('graphql');
+var graphql = require('graphql');
+var resolver = require('./resolver');
 
-const schema = buildSchema(`
-  type Query {
-    hello: String
-
-    quoteOfTheDay: String
-
-    random: Float!
-    rollDice(numDice: Int!, numSides: Int): [Int]
-    getDie(numSides: Int): RandomDie
-
-    getString: String
-    getMessage(id: ID!): Message
-
-    ip: String
+var RandomDieType = new graphql.GraphQLObjectType({
+  name: 'RandomDie',
+  fields: {
+    numSides: { type: new graphql.GraphQLNonNull(graphql.GraphQLInt) },
+    rollOnce: { type: new graphql.GraphQLNonNull(graphql.GraphQLInt) },
+    roll: {
+      type: new graphql.GraphQLList(graphql.GraphQLInt),
+      args: {
+        numRolls: { type: new graphql.GraphQLNonNull(graphql.GraphQLInt) },
+      },
+      resolve: resolver.roll
+    },
   }
+});
 
-  type RandomDie {
-    numSides: Int!
-    rollOnce: Int!
-    roll(numRolls: Int!): [Int]
+var Message = new graphql.GraphQLObjectType({
+  name: 'Message',
+  fields: {
+    id: { type: new graphql.GraphQLNonNull(graphql.GraphQLID) },
+    content: { type: graphql.GraphQLString },
+    author: { type: graphql.GraphQLString }
   }
+});
 
-  type Mutation {
-    setString(message: String): String
-
-    createMessage(input: MessageInput): Message
-    createMessage2(input: MessageInput): Message
-    updateMessage(id: ID!, input: MessageInput): Message
+var queryType = new graphql.GraphQLObjectType({
+  name: 'Query',
+  fields: {
+    hello: {
+      type: graphql.GraphQLString,
+      resolve: resolver.hello
+    },
+    random: {
+      type: new graphql.GraphQLNonNull(graphql.GraphQLFloat),
+      resolve: resolver.random
+    },
+    rollDice: {
+      type: new graphql.GraphQLList(graphql.GraphQLInt),
+      args: {
+        numDice: { type: new graphql.GraphQLNonNull(graphql.GraphQLInt) },
+        numSides: { type: graphql.GraphQLInt }
+      },
+      resolve: resolver.rollDice
+    },
+    getString: {
+      type: new graphql.GraphQLNonNull(graphql.GraphQLString),
+      resolve: resolver.getString
+    },
+    getDie: {
+      type: RandomDieType,
+      args: {
+        numSides: { type: graphql.GraphQLInt }
+      },
+      resolve: resolver.getDie
+    },
+    ip: {
+      type: graphql.GraphQLString,
+      resolve: resolver.ip
+    },
+    getMessage: {
+      type: Message,
+      args: {
+        id: { type: graphql.GraphQLID }
+      },
+      resolve: resolver.getMessage
+    }
   }
+});
 
-  input MessageInput {
-    content: String
-    author: String
+var MessageInput = new graphql.GraphQLInputObjectType({
+  name: 'MessageInput',
+  fields: {
+    content: { type: graphql.GraphQLString },
+    author: { type: graphql.GraphQLString },
   }
+});
 
-  type Message {
-    id: ID!
-    content: String
-    author: String
+var mutationType = new graphql.GraphQLObjectType({
+  name: 'Mutation',
+  fields: {
+    setString: {
+      type: new graphql.GraphQLNonNull(graphql.GraphQLString),
+      args: {
+        message: { type: new graphql.GraphQLNonNull(graphql.GraphQLString) }
+      },
+      resolve: resolver.setString
+    },
+    createMessage: {
+      type: Message,
+      args: { input: { type: MessageInput } },
+      resolve: resolver.createMessage
+    },
+    updateMessage: {
+      type: Message,
+      args: {
+        id:    { type: new graphql.GraphQLNonNull(graphql.GraphQLID) },
+        input: { type: MessageInput }
+      },
+      resolve: resolver.updateMessage
+    }
   }
-`);
+});
+
+var schema = new graphql.GraphQLSchema({query: queryType, mutation: mutationType});
 
 module.exports = schema;
